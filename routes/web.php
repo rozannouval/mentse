@@ -2,18 +2,23 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
-    if (auth()->check()) {
-        $role = auth()->user()->role;
-        return redirect()->match([
-            'admin' => 'admin.dashboard',
-            'dosen' => 'dosen.dashboard',
-            'mentor' => 'mentor.dashboard',
+    if (Auth::check()) {
+        $user = Auth::user();
+
+        $targetRoute = match ($user->role) {
+            'admin'     => 'admin.dashboard',
+            'dosen'     => 'dosen.dashboard',
+            'mentor'    => 'mentor.dashboard',
             'mahasiswa' => 'mahasiswa.dashboard',
-        ][$role] ?? 'login');
+            default     => 'login',
+        };
+
+        return redirect()->route($targetRoute);
     }
-    return redirect()->route('login');
+    return view('auth.login');
 });
 
 Route::middleware('auth')->group(function () {
