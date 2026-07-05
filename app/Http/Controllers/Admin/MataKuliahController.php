@@ -18,7 +18,7 @@ class MataKuliahController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_mata_kuliah' => 'required|string|max:255',
+            'nama_mata_kuliah' => 'required|string|max:255|unique:mata_kuliahs,nama_mata_kuliah',
         ]);
 
         MataKuliah::create($validated);
@@ -31,7 +31,7 @@ class MataKuliahController extends Controller
     public function update(Request $request, MataKuliah $mataKuliah)
     {
         $validated = $request->validate([
-            'nama_mata_kuliah' => 'required|string|max:255',
+            'nama_mata_kuliah' => 'required|string|max:255|unique:mata_kuliahs,nama_mata_kuliah,' . $mataKuliah->id,
         ]);
 
         $mataKuliah->update($validated);

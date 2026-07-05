@@ -25,24 +25,35 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
             'role' => 'required|in:dosen,mentor,mahasiswa',
-            'nim' => 'required_if:role,mahasiswa,mentor|string|max:20|unique:users,nim',
-            'nidn' => 'required_if:role,dosen|string|max:20|unique:users,nidn',
-            'kelas_id' => 'required_if:role,mahasiswa|exists:kelas,id',
-        ]);
+        ];
+
+        $role = $request->role;
+
+        if (in_array($role, ['mahasiswa', 'mentor'])) {
+            $rules['nim'] = 'required|string|max:20|unique:users,nim';
+        }
+        if ($role === 'dosen') {
+            $rules['nidn'] = 'required|string|max:20|unique:users,nidn';
+        }
+        if ($role === 'mahasiswa') {
+            $rules['kelas_id'] = 'required|exists:kelas,id';
+        }
+
+        $validated = $request->validate($rules);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
-            'nim' => in_array($validated['role'], ['mahasiswa', 'mentor']) ? $validated['nim'] : null,
-            'nidn' => $validated['role'] === 'dosen' ? $validated['nidn'] : null,
-            'kelas_id' => $validated['role'] === 'mahasiswa' ? $validated['kelas_id'] : null,
+            'nim' => in_array($role, ['mahasiswa', 'mentor']) ? ($validated['nim'] ?? null) : null,
+            'nidn' => $role === 'dosen' ? ($validated['nidn'] ?? null) : null,
+            'kelas_id' => $role === 'mahasiswa' ? ($validated['kelas_id'] ?? null) : null,
         ]);
 
         ActivityLogger::log('Tambah User', "Admin menambahkan user {$user->name} ({$user->email}) sebagai {$user->role}");
@@ -58,15 +69,26 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        $validated = $request->validate([
+        $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8',
             'role' => 'required|in:admin,dosen,mentor,mahasiswa',
-            'nim' => 'required_if:role,mahasiswa,mentor|string|max:20|unique:users,nim,' . $user->id,
-            'nidn' => 'required_if:role,dosen|string|max:20|unique:users,nidn,' . $user->id,
-            'kelas_id' => 'required_if:role,mahasiswa|exists:kelas,id',
-        ]);
+        ];
+
+        $role = $user->role === 'admin' ? 'admin' : $request->role;
+
+        if (in_array($role, ['mahasiswa', 'mentor'])) {
+            $rules['nim'] = 'required|string|max:20|unique:users,nim,' . $user->id;
+        }
+        if ($role === 'dosen') {
+            $rules['nidn'] = 'required|string|max:20|unique:users,nidn,' . $user->id;
+        }
+        if ($role === 'mahasiswa') {
+            $rules['kelas_id'] = 'required|exists:kelas,id';
+        }
+
+        $validated = $request->validate($rules);
 
         $role = $user->role === 'admin' ? 'admin' : $validated['role'];
 
@@ -74,9 +96,9 @@ class UserController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'role' => $role,
-            'nim' => in_array($role, ['mahasiswa', 'mentor']) ? $validated['nim'] : null,
-            'nidn' => $role === 'dosen' ? $validated['nidn'] : null,
-            'kelas_id' => $role === 'mahasiswa' ? $validated['kelas_id'] : null,
+            'nim' => in_array($role, ['mahasiswa', 'mentor']) ? ($validated['nim'] ?? null) : null,
+            'nidn' => $role === 'dosen' ? ($validated['nidn'] ?? null) : null,
+            'kelas_id' => $role === 'mahasiswa' ? ($validated['kelas_id'] ?? null) : null,
         ];
 
         if ($request->filled('password')) {

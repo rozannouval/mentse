@@ -8,6 +8,7 @@ use App\Models\Kelas;
 use App\Models\MataKuliah;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class KelasController extends Controller
 {
@@ -27,7 +28,10 @@ class KelasController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_kelas' => 'required|string|max:255',
+            'nama_kelas' => [
+                'required', 'string', 'max:255',
+                Rule::unique('kelas')->where(fn($q) => $q->where('mata_kuliah_id', $request->mata_kuliah_id)),
+            ],
             'mata_kuliah_id' => 'required|exists:mata_kuliahs,id',
             'dosen_id' => 'required|exists:users,id',
             'mentor_id' => 'nullable|exists:users,id',
@@ -64,7 +68,10 @@ class KelasController extends Controller
     public function update(Request $request, Kelas $kelas)
     {
         $validated = $request->validate([
-            'nama_kelas' => 'required|string|max:255',
+            'nama_kelas' => [
+                'required', 'string', 'max:255',
+                Rule::unique('kelas')->where(fn($q) => $q->where('mata_kuliah_id', $request->mata_kuliah_id))->ignore($kelas->id),
+            ],
             'mata_kuliah_id' => 'required|exists:mata_kuliahs,id',
             'dosen_id' => 'required|exists:users,id',
             'mentor_id' => 'nullable|exists:users,id',

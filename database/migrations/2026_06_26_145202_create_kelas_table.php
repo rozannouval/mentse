@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreign('mata_kuliah_id')->references('id')->on('mata_kuliahs')->onDelete('cascade');
             $table->foreign('dosen_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('mentor_id')->references('id')->on('users')->onDelete('set null');
+            $table->unique(['nama_kelas', 'mata_kuliah_id']);
         });
     }
 
