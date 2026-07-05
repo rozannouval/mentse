@@ -4,6 +4,15 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
+    if (auth()->check()) {
+        $role = auth()->user()->role;
+        return redirect()->match([
+            'admin' => 'admin.dashboard',
+            'dosen' => 'dosen.dashboard',
+            'mentor' => 'mentor.dashboard',
+            'mahasiswa' => 'mahasiswa.dashboard',
+        ][$role] ?? 'login');
+    }
     return redirect()->route('login');
 });
 

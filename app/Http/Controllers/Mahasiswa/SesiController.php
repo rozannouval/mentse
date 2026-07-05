@@ -57,6 +57,26 @@ class SesiController extends Controller
         return redirect()->route('mahasiswa.riwayat')->with('success', 'Berhasil mendaftar sesi mentoring.');
     }
 
+    public function batalkan(PesertaSesi $pesertaSesi)
+    {
+        $mahasiswa = Auth::user();
+
+        if ($pesertaSesi->mahasiswa_id !== $mahasiswa->id) {
+            abort(403);
+        }
+
+        if ($pesertaSesi->status !== 'terdaftar') {
+            return back()->with('error', 'Pendaftaran tidak dapat dibatalkan karena sesi sudah berlangsung/selesai.');
+        }
+
+        $topik = $pesertaSesi->sesi->topik ?? 'Sesi Mentoring';
+        $pesertaSesi->delete();
+
+        ActivityLogger::log('Batalkan Sesi', "Mahasiswa {$mahasiswa->name} membatalkan pendaftaran sesi {$topik}");
+
+        return back()->with('success', 'Pendaftaran sesi berhasil dibatalkan.');
+    }
+
     public function riwayat()
     {
         $riwayatSesi = Auth::user()->pesertaSesi()

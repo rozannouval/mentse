@@ -1,20 +1,23 @@
-@props(['title', 'value', 'color' => 'blue'])
+@props(['title', 'value', 'color' => 'gray'])
 
 @php
-$borderColors = [
-    'blue' => 'border-l-blue-500',
-    'green' => 'border-l-emerald-500',
-    'purple' => 'border-l-violet-500',
-    'amber' => 'border-l-amber-500',
-    'red' => 'border-l-red-500',
-    'indigo' => 'border-l-indigo-500',
-    'teal' => 'border-l-teal-500',
-    'pink' => 'border-l-pink-500',
+$accent = [
+    'blue' => 'bg-blue-500',
+    'green' => 'bg-emerald-500',
+    'violet' => 'bg-violet-500',
+    'amber' => 'bg-amber-500',
+    'indigo' => 'bg-indigo-500',
+    'red' => 'bg-red-500',
+    'emerald' => 'bg-emerald-500',
+    'gray' => 'bg-gray-300',
 ];
-$borderColor = $borderColors[$color] ?? 'border-l-blue-500';
+$bar = $accent[$color] ?? $accent['gray'];
 @endphp
 
-<div class="bg-white rounded-lg border border-gray-200 border-l-4 {{ $borderColor }} p-5">
-    <p class="text-sm font-medium text-gray-500">{{ $title }}</p>
-    <p class="text-2xl font-bold text-gray-900 mt-0.5">{{ $value }}</p>
+<div class="bg-white rounded-xl border border-gray-200 px-5 py-4">
+    <p class="text-xs text-gray-500 mb-0.5">{{ $title }}</p>
+    <p class="text-2xl font-semibold text-gray-900 tracking-tight">{{ $value }}</p>
+    <div class="mt-3 h-0.5 w-full bg-gray-100 rounded-full overflow-hidden">
+        <div class="h-full w-full {{ $bar }} rounded-full"></div>
+    </div>
 </div>

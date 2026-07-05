@@ -10,6 +10,15 @@ use Illuminate\Support\Facades\Auth;
 
 class FeedbackController extends Controller
 {
+    public function index()
+    {
+        $feedbackList = Feedback::whereHas('pesertaSesi', function ($q) {
+            $q->where('mahasiswa_id', Auth::id());
+        })->with(['pesertaSesi.sesi.kelas.mataKuliah'])->latest()->get();
+
+        return view('mahasiswa.feedback-index', compact('feedbackList'));
+    }
+
     public function create(PesertaSesi $pesertaSesi)
     {
         if ($pesertaSesi->mahasiswa_id !== Auth::id()) {

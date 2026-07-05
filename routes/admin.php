@@ -16,8 +16,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('mata-kuliah', MataKuliahController::class);
 
     Route::resource('kelas', KelasController::class)->parameters(['kelas' => 'kelas']);
-    Route::post('/kelas/{kelas}/peserta', [KelasController::class, 'addPeserta'])->name('kelas.peserta.store');
-    Route::delete('/kelas/{kelas}/peserta/{peserta}', [KelasController::class, 'removePeserta'])->name('kelas.peserta.destroy');
 
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
     Route::get('/aktivitas', [AktivitasController::class, 'index'])->name('aktivitas');

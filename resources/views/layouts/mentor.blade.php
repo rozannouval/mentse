@@ -6,11 +6,14 @@
     <title>@yield('title', 'Dashboard') - Mentor MENTSE</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
+    <style>body{font-family:'Inter',sans-serif;}</style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-[#f6f5f2]">
     <x-sidebar role="mentor" />
 
-    <div class="ml-64 min-h-screen">
+    <div class="ml-56 min-h-screen">
         <x-header :title="View::yieldContent('title', 'Dashboard')" role="mentor" />
 
         <main class="p-6">
@@ -18,5 +21,7 @@
             @yield('content')
         </main>
     </div>
+
+    <x-confirm-modal />
 </body>
 </html>

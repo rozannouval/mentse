@@ -11,9 +11,11 @@ Route::middleware(['auth', 'role:mahasiswa'])->prefix('mahasiswa')->name('mahasi
 
     Route::get('/sesi', [SesiController::class, 'index'])->name('sesi.index');
     Route::post('/sesi/{sesi}/daftar', [SesiController::class, 'daftar'])->name('sesi.daftar');
+    Route::delete('/sesi/{pesertaSesi}/batalkan', [SesiController::class, 'batalkan'])->name('sesi.batalkan');
 
     Route::get('/riwayat', [SesiController::class, 'riwayat'])->name('riwayat');
 
+    Route::get('/feedback', [FeedbackController::class, 'index'])->name('feedback.index');
     Route::get('/feedback/{pesertaSesi}', [FeedbackController::class, 'create'])->name('feedback.create');
     Route::post('/feedback/{pesertaSesi}', [FeedbackController::class, 'store'])->name('feedback.store');
 

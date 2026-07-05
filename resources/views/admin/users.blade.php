@@ -7,49 +7,37 @@
     $roleCounts = ['admin' => 0, 'dosen' => 0, 'mentor' => 0, 'mahasiswa' => 0];
     foreach ($users as $u) { if (isset($roleCounts[$u->role])) $roleCounts[$u->role]++; }
     @endphp
-    <div class="bg-white rounded-lg border border-slate-200 p-4">
-        <p class="text-xs font-medium text-slate-500">Admin</p>
-        <p class="text-xl font-bold text-slate-900 mt-0.5">{{ $roleCounts['admin'] }}</p>
-    </div>
-    <div class="bg-white rounded-lg border border-slate-200 p-4">
-        <p class="text-xs font-medium text-slate-500">Dosen</p>
-        <p class="text-xl font-bold text-slate-900 mt-0.5">{{ $roleCounts['dosen'] }}</p>
-    </div>
-    <div class="bg-white rounded-lg border border-slate-200 p-4">
-        <p class="text-xs font-medium text-slate-500">Mentor</p>
-        <p class="text-xl font-bold text-slate-900 mt-0.5">{{ $roleCounts['mentor'] }}</p>
-    </div>
-    <div class="bg-white rounded-lg border border-slate-200 p-4">
-        <p class="text-xs font-medium text-slate-500">Mahasiswa</p>
-        <p class="text-xl font-bold text-slate-900 mt-0.5">{{ $roleCounts['mahasiswa'] }}</p>
-    </div>
+    <x-stat title="Admin" :value="$roleCounts['admin']" color="red" />
+    <x-stat title="Dosen" :value="$roleCounts['dosen']" color="violet" />
+    <x-stat title="Mentor" :value="$roleCounts['mentor']" color="amber" />
+    <x-stat title="Mahasiswa" :value="$roleCounts['mahasiswa']" color="green" />
 </div>
 
-<div class="bg-white rounded-lg border border-slate-200">
+<div class="bg-white rounded-xl border border-slate-100 shadow-sm">
     <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-        <h2 class="text-sm font-semibold text-slate-900">Daftar Pengguna</h2>
-        <a href="{{ route('admin.users.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium rounded transition-colors">
+        <h2 class="text-base font-semibold text-slate-900">Daftar Pengguna</h2>
+        <a href="{{ route('admin.users.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium rounded-lg transition-colors shadow-sm shadow-slate-900/20">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             Tambah User
         </a>
     </div>
-    <div class="p-5">
+    <div class="overflow-x-auto">
         <table class="w-full text-sm">
             <thead>
-                <tr class="border-b border-slate-100">
-                    <th class="text-left pb-3 pr-4 text-xs font-semibold text-slate-500 uppercase">No</th>
-                    <th class="text-left pb-3 pr-4 text-xs font-semibold text-slate-500 uppercase">User</th>
-                    <th class="text-left pb-3 pr-4 text-xs font-semibold text-slate-500 uppercase">NIM / NIDN</th>
-                    <th class="text-left pb-3 pr-4 text-xs font-semibold text-slate-500 uppercase">Email</th>
-                    <th class="text-left pb-3 pr-4 text-xs font-semibold text-slate-500 uppercase">Role</th>
-                    <th class="text-left pb-3 text-xs font-semibold text-slate-500 uppercase">Aksi</th>
+                <tr class="border-b border-slate-100 bg-slate-50/50">
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">No</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">User</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">NIM / NIDN</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">Email</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">Role</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
                 @forelse ($users as $key => $user)
-                <tr class="hover:bg-slate-50/50">
-                    <td class="py-3 pr-4 text-slate-500">{{ $key + 1 }}</td>
-                    <td class="py-3 pr-4">
+                <tr class="hover:bg-slate-50/50 transition-colors">
+                    <td class="px-5 py-3.5 text-slate-500">{{ $key + 1 }}</td>
+                    <td class="px-5 py-3.5">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-slate-500 flex-shrink-0 overflow-hidden">
                                 @if ($user->photo)
@@ -61,11 +49,11 @@
                             <span class="font-medium text-slate-900">{{ $user->name }}</span>
                         </div>
                     </td>
-                    <td class="py-3 pr-4 text-slate-500 font-mono text-xs">
+                    <td class="px-5 py-3.5 text-slate-500 font-mono text-xs">
                         {{ $user->nim ?? ($user->nidn ?? '-') }}
                     </td>
-                    <td class="py-3 pr-4 text-slate-500">{{ $user->email }}</td>
-                    <td class="py-3 pr-4">
+                    <td class="px-5 py-3.5 text-slate-500">{{ $user->email }}</td>
+                    <td class="px-5 py-3.5">
                         @php
                         $roleStyle = match($user->role) {
                             'admin' => 'bg-red-50 text-red-700 ring-red-600/20',
@@ -77,15 +65,15 @@
                         @endphp
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ring-1 ring-inset {{ $roleStyle }}">{{ ucfirst($user->role) }}</span>
                     </td>
-                    <td class="py-3">
-                        <div class="flex items-center gap-2">
+                    <td class="px-5 py-3.5">
+                        <div class="flex items-center gap-1.5">
                             <button onclick="detailUser({{ $user->id }}, '{{ $user->name }}', '{{ $user->email }}', '{{ $user->role }}', '{{ $user->nim ?? '' }}', '{{ $user->nidn ?? '' }}')"
-                                class="text-xs text-slate-500 hover:text-slate-700 font-medium cursor-pointer">Detail</button>
-                            <a href="{{ route('admin.users.edit', $user) }}" class="text-xs text-blue-600 hover:text-blue-800 font-medium">Edit</a>
+                                class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-md transition-colors cursor-pointer">Detail</button>
+                            <a href="{{ route('admin.users.edit', $user) }}" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors">Edit</a>
                             @if ($user->role !== 'admin')
-                            <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline" onsubmit="return confirm('Hapus user {{ $user->name }}?')">
+                            <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline">
                                 @csrf @method('DELETE')
-                                <button class="text-xs text-red-600 hover:text-red-800 font-medium cursor-pointer">Hapus</button>
+                                <button type="button" onclick="confirmAction(this.closest('form'), 'Hapus User', 'Yakin ingin menghapus user <strong>{{ $user->name }}</strong>?', 'Ya, Hapus')" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-colors cursor-pointer">Hapus</button>
                             </form>
                             @endif
                         </div>
@@ -93,7 +81,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="py-8 text-center text-slate-400">Belum ada data user.</td>
+                    <td colspan="7" class="px-5 py-10 text-center text-slate-400">Belum ada data user.</td>
                 </tr>
                 @endforelse
             </tbody>

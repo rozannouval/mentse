@@ -1,145 +1,76 @@
 @extends('layouts.admin')
-@section('title', 'Dashboard Admin')
+@section('title', 'Dashboard')
 
 @section('content')
-<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
     <x-stat title="Total User" :value="$totalUser" color="blue" />
-    <x-stat title="Dosen" :value="$totalDosen" color="violet" />
-    <x-stat title="Mentor" :value="$totalMentor" color="amber" />
-    <x-stat title="Mahasiswa" :value="$totalMahasiswa" color="emerald" />
-    <x-stat title="Mata Kuliah" :value="$totalMataKuliah" color="indigo" />
-    <x-stat title="Kelas" :value="$totalKelas" color="teal" />
+    <x-stat title="Total Kelas" :value="$totalKelas" color="indigo" />
+    <x-stat title="Sesi Aktif" :value="$sesiAktif" color="green" />
+    <x-stat title="Kelas Tanpa Mentor" :value="$kelasTanpaMentor" color="amber" />
 </div>
 
-<div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
-    <div class="bg-white rounded-lg border border-slate-200 p-4">
-        <p class="text-xs font-medium text-slate-500">Total Sesi</p>
-        <p class="text-2xl font-bold text-slate-900 mt-0.5">{{ $totalSesi }}</p>
-    </div>
-    <div class="bg-white rounded-lg border border-slate-200 p-4">
-        <p class="text-xs font-medium text-slate-500">Sesi Aktif</p>
-        <p class="text-2xl font-bold text-slate-900 mt-0.5">{{ $sesiAktif }}</p>
-    </div>
-    <div class="bg-white rounded-lg border border-slate-200 p-4">
-        <p class="text-xs font-medium text-slate-500">Kelas Tanpa Mentor</p>
-        <p class="text-2xl font-bold text-slate-900 mt-0.5">{{ $kelasTanpaMentor }}</p>
-    </div>
-    <div class="bg-white rounded-lg border border-slate-200 p-4">
-        <p class="text-xs font-medium text-slate-500">Total Feedback</p>
-        <p class="text-2xl font-bold text-slate-900 mt-0.5">{{ $totalFeedback }}</p>
-    </div>
-</div>
-
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-    <div class="bg-white rounded-lg border border-slate-200">
-        <div class="px-5 py-4 border-b border-slate-100">
-            <h2 class="text-sm font-semibold text-slate-900">Sesi Terbaru</h2>
-        </div>
-        <div class="p-5">
-            @forelse ($recentSesi as $s)
-            <div class="flex items-center justify-between py-3 border-b border-slate-50 last:border-0">
-                <div>
-                    <p class="text-sm font-medium text-slate-900">{{ $s->topik }}</p>
-                    <p class="text-xs text-slate-500">{{ $s->kelas->nama_kelas ?? '-' }} &middot; {{ $s->kelas->dosen->name ?? '-' }}</p>
-                </div>
-                <div class="text-right">
-                    <p class="text-xs text-slate-500">{{ \Carbon\Carbon::parse($s->tanggal)->format('d M Y') }}</p>
-                    <x-badge type="{{ $s->status }}">{{ ucfirst($s->status) }}</x-badge>
-                </div>
-            </div>
-            @empty
-            <p class="text-sm text-slate-400 text-center py-6">Belum ada sesi.</p>
-            @endforelse
-        </div>
-    </div>
-
-    <div class="bg-white rounded-lg border border-slate-200">
-        <div class="px-5 py-4 border-b border-slate-100">
-            <h2 class="text-sm font-semibold text-slate-900">User Terdaftar</h2>
-        </div>
-        <div class="p-5">
-            @forelse ($recentUsers as $u)
-            <div class="flex items-center justify-between py-3 border-b border-slate-50 last:border-0">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-slate-500 overflow-hidden">
-                        @if ($u->photo)
-                        <img src="{{ asset('storage/' . $u->photo) }}" alt="" class="w-full h-full object-cover">
-                        @else
-                        {{ strtoupper(substr($u->name, 0, 1)) }}
-                        @endif
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-slate-900">{{ $u->name }}</p>
-                        <p class="text-xs text-slate-500">{{ $u->email }}</p>
-                    </div>
-                </div>
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium @switch($u->role) @case('admin') bg-red-50 text-red-700 @break @case('dosen') bg-violet-50 text-violet-700 @break @case('mentor') bg-amber-50 text-amber-700 @break @default bg-emerald-50 text-emerald-700 @endswitch">
-                    {{ ucfirst($u->role) }}
-                </span>
-            </div>
-            @empty
-            <p class="text-sm text-slate-400 text-center py-6">Belum ada user.</p>
-            @endforelse
-        </div>
-    </div>
-</div>
-
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <div class="bg-white rounded-lg border border-slate-200">
-        <div class="px-5 py-4 border-b border-slate-100">
-            <h2 class="text-sm font-semibold text-slate-900">Distribusi Role</h2>
-        </div>
-        <div class="p-5">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-5">
+        <h2 class="text-sm font-semibold text-gray-900 mb-1">Sesi per Bulan</h2>
+        <p class="text-xs text-gray-400 mb-5">{{ date('Y') }}</p>
+        @php $months = [1,2,3,4,5,6,7,8,9,10,11,12]; $maxCount = max($kelasPerBulan->max() ?: 1, 1); @endphp
+        <div class="flex items-end gap-2" style="height:160px">
+            @foreach ($months as $m)
             @php
-                $roles = [
-                    ['label' => 'Admin', 'count' => 1, 'color' => 'bg-red-500'],
-                    ['label' => 'Dosen', 'count' => $totalDosen, 'color' => 'bg-violet-500'],
-                    ['label' => 'Mentor', 'count' => $totalMentor, 'color' => 'bg-amber-500'],
-                    ['label' => 'Mahasiswa', 'count' => $totalMahasiswa, 'color' => 'bg-emerald-500'],
-                ];
-                $maxCount = max($totalDosen, $totalMentor, $totalMahasiswa, 1);
+                $count = $kelasPerBulan->get($m, 0);
+                $pct = $count > 0 ? ($count / $maxCount) * 100 : 0;
             @endphp
-            <div class="space-y-4">
-                @foreach ($roles as $r)
-                <div>
-                    <div class="flex items-center justify-between mb-1">
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full {{ $r['color'] }}"></span>
-                            <span class="text-sm text-slate-600">{{ $r['label'] }}</span>
-                        </div>
-                        <span class="text-sm font-semibold text-slate-900">{{ $r['count'] }}</span>
-                    </div>
-                    <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                        <div class="h-full {{ $r['color'] }} rounded-full transition-all duration-500" style="width: {{ ($r['count'] / $maxCount) * 100 }}%"></div>
-                    </div>
-                </div>
-                @endforeach
+            <div class="flex-1 flex flex-col items-center gap-1.5 justify-end h-full">
+                <span class="text-[10px] font-medium {{ $count > 0 ? 'text-gray-700' : 'text-gray-300' }}">{{ $count }}</span>
+                <div class="w-full rounded-sm {{ $count > 0 ? 'bg-gray-900' : 'bg-gray-100' }}" style="height: {{ max($pct, 2) }}%"></div>
+                <span class="text-[10px] text-gray-400">{{ \Carbon\Carbon::create()->month($m)->format('M') }}</span>
             </div>
+            @endforeach
         </div>
     </div>
 
-    <div class="bg-white rounded-lg border border-slate-200 lg:col-span-2">
-        <div class="px-5 py-4 border-b border-slate-100">
-            <h2 class="text-sm font-semibold text-slate-900">Sesi per Bulan ({{ date('Y') }})</h2>
-        </div>
-        <div class="p-5">
-            @php $months = [1,2,3,4,5,6,7,8,9,10,11,12]; $maxCount = max($kelasPerBulan->max() ?: 1, 1); @endphp
-            <div class="relative" style="height:192px">
-                <div class="absolute inset-0 flex items-end gap-2 px-1">
-                    @foreach ($months as $m)
-                    @php
-                        $count = $kelasPerBulan->get($m, 0);
-                        $barH = $count > 0 ? round(($count / $maxCount) * 160) + 8 : 4;
-                    @endphp
-                    <div class="flex-1 flex flex-col items-center gap-1 justify-end">
-                        <span class="text-[10px] font-medium {{ $count > 0 ? 'text-slate-700' : 'text-slate-300' }}">{{ $count }}</span>
-                        <div class="w-full min-h-[4px] rounded-t {{ $count > 0 ? 'bg-blue-500' : 'bg-slate-100' }}" style="height: {{ $barH }}px"></div>
-                        <span class="text-[10px] text-slate-400">{{ \Carbon\Carbon::create()->month($m)->format('M') }}</span>
-                    </div>
-                    @endforeach
+    <div class="bg-white rounded-xl border border-gray-200 p-5">
+        <h2 class="text-sm font-semibold text-gray-900 mb-4">Distribusi Role</h2>
+        @php $maxCount = max($roleDistribusi['dosen'], $roleDistribusi['mentor'], $roleDistribusi['mahasiswa'], 1); @endphp
+        <div class="space-y-4">
+            @foreach (['dosen' => 'bg-violet-400', 'mentor' => 'bg-amber-400', 'mahasiswa' => 'bg-emerald-400'] as $role => $color)
+            @php $count = $roleDistribusi[$role]; @endphp
+            <div>
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-sm text-gray-600 capitalize">{{ $role }}</span>
+                    <span class="text-sm font-medium text-gray-900">{{ $count }}</span>
+                </div>
+                <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div class="h-full {{ $color }} rounded-full" style="width: {{ $maxCount > 0 ? ($count / $maxCount) * 100 : 0 }}%"></div>
+                </div>
+            </div>
+            @endforeach
+            <div class="pt-3 border-t border-gray-100">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-semibold text-gray-900">Total</span>
+                    <span class="text-sm font-bold text-gray-900">{{ array_sum($roleDistribusi) }}</span>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+<div class="bg-white rounded-xl border border-gray-200 p-5">
+    <h2 class="text-sm font-semibold text-gray-900 mb-1">Sesi Terbaru</h2>
+    <p class="text-xs text-gray-400 mb-4">5 sesi mentoring terakhir</p>
+    @forelse ($recentSesi as $s)
+    <div class="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
+        <div>
+            <p class="text-sm font-medium text-gray-900">{{ $s->topik }}</p>
+            <p class="text-xs text-gray-500">{{ $s->kelas->nama_kelas ?? '-' }} &middot; {{ $s->kelas->dosen->name ?? '-' }}</p>
+        </div>
+        <div class="text-right">
+            <p class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($s->tanggal)->format('d M Y') }}</p>
+            <x-badge type="{{ $s->status }}">{{ ucfirst($s->status) }}</x-badge>
+        </div>
+    </div>
+    @empty
+    <p class="text-sm text-gray-400 text-center py-6">Belum ada sesi.</p>
+    @endforelse
 </div>
 @endsection

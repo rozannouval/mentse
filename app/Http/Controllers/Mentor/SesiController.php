@@ -6,6 +6,7 @@ use App\Helpers\ActivityLogger;
 use App\Http\Controllers\Controller;
 use App\Models\SesiMentoring;
 use App\Models\PesertaSesi;
+use App\Models\Feedback;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,19 +23,24 @@ class SesiController extends Controller
 
     public function create()
     {
-        $kelasList = Auth::user()->kelasMentor()->with('mataKuliah')->get();
+        $kelas = Auth::user()->kelasMentor()->with('mataKuliah')->first();
 
-        if ($kelasList->isEmpty()) {
+        if (!$kelas) {
             return redirect()->route('mentor.dashboard')->with('error', 'Anda belum ditugaskan ke kelas mana pun.');
         }
 
-        return view('mentor.sesi-create', compact('kelasList'));
+        return view('mentor.sesi-create', compact('kelas'));
     }
 
     public function store(Request $request)
     {
+        $kelas = Auth::user()->kelasMentor()->first();
+
+        if (!$kelas) {
+            return back()->with('error', 'Anda tidak memiliki akses ke kelas ini.');
+        }
+
         $validated = $request->validate([
-            'kelas_id' => 'required|exists:kelas,id',
             'topik' => 'required|string|max:255',
             'deskripsi' => 'required|string',
             'tanggal' => 'required|date|after_or_equal:today',
@@ -43,17 +49,12 @@ class SesiController extends Controller
             'kuota' => 'required|integer|min:1',
         ]);
 
-        $kelas = Auth::user()->kelasMentor()->find($validated['kelas_id']);
-
-        if (!$kelas) {
-            return back()->with('error', 'Anda tidak memiliki akses ke kelas ini.');
-        }
-
+        $validated['kelas_id'] = $kelas->id;
         $validated['status'] = 'dibuka';
 
         $sesi = SesiMentoring::create($validated);
 
-        ActivityLogger::log('Buat Sesi', "Mentor {$sesi->kelas->mentor->name} membuat sesi {$sesi->topik}");
+        ActivityLogger::log('Buat Sesi', "Mentor membuat sesi {$sesi->topik}");
 
         return redirect()->route('mentor.sesi.index')->with('success', 'Sesi mentoring berhasil dibuat.');
     }
@@ -64,9 +65,7 @@ class SesiController extends Controller
             abort(403);
         }
 
-        $kelasList = Auth::user()->kelasMentor()->with('mataKuliah')->get();
-
-        return view('mentor.sesi-edit', compact('sesi', 'kelasList'));
+        return view('mentor.sesi-edit', compact('sesi'));
     }
 
     public function update(Request $request, SesiMentoring $sesi)
@@ -76,7 +75,6 @@ class SesiController extends Controller
         }
 
         $validated = $request->validate([
-            'kelas_id' => 'required|exists:kelas,id',
             'topik' => 'required|string|max:255',
             'deskripsi' => 'required|string',
             'tanggal' => 'required|date',
@@ -87,7 +85,7 @@ class SesiController extends Controller
 
         $sesi->update($validated);
 
-        ActivityLogger::log('Update Sesi', "Mentor {$sesi->kelas->mentor->name} mengupdate sesi {$sesi->topik}");
+        ActivityLogger::log('Update Sesi', "Mentor mengupdate sesi {$sesi->topik}");
 
         return redirect()->route('mentor.sesi.index')->with('success', 'Sesi mentoring berhasil diperbarui.');
     }
@@ -139,5 +137,45 @@ class SesiController extends Controller
         ActivityLogger::log('Tutup Sesi', "Mentor menutup sesi {$sesi->topik}");
 
         return back()->with('success', 'Sesi mentoring ditutup.');
+    }
+
+    public function selesai(SesiMentoring $sesi)
+    {
+        if ($sesi->kelas->mentor_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $sesi->update(['status' => 'selesai']);
+
+        ActivityLogger::log('Selesaikan Sesi', "Mentor menyelesaikan sesi {$sesi->topik}");
+
+        return back()->with('success', 'Sesi mentoring diselesaikan.');
+    }
+
+    public function peserta()
+    {
+        $mentor = Auth::user();
+
+        $pesertaList = PesertaSesi::whereHas('sesi.kelas', function ($q) use ($mentor) {
+            $q->where('mentor_id', $mentor->id);
+        })->with(['mahasiswa', 'sesi.kelas.mataKuliah'])->latest()->get();
+
+        return view('mentor.peserta', compact('pesertaList'));
+    }
+
+    public function feedback()
+    {
+        $mentor = Auth::user();
+
+        $feedbackList = Feedback::whereHas('pesertaSesi.sesi.kelas', function ($q) use ($mentor) {
+            $q->where('mentor_id', $mentor->id);
+        })->with(['pesertaSesi.mahasiswa', 'pesertaSesi.sesi'])->latest()->get();
+
+        $avgRating = Feedback::whereHas('pesertaSesi.sesi.kelas', function ($q) use ($mentor) {
+            $q->where('mentor_id', $mentor->id);
+        })->selectRaw('AVG(komunikasi) as avg_kom, AVG(penguasaan_materi) as avg_mat, AVG(kejelasan_penyampaian) as avg_peny')
+            ->first();
+
+        return view('mentor.feedback', compact('feedbackList', 'avgRating'));
     }
 }
