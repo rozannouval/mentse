@@ -16,6 +16,10 @@ return new class extends Migration
             $table->unsignedBigInteger('kelas_id');
             $table->unsignedBigInteger('mahasiswa_id');
             $table->timestamps();
+
+            $table->foreign('kelas_id')->references('id')->on('kelas')->onDelete('cascade');
+            $table->foreign('mahasiswa_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unique(['kelas_id', 'mahasiswa_id']);
         });
     }
 

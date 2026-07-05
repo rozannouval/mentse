@@ -16,8 +16,12 @@ return new class extends Migration
             $table->string('nama_kelas');
             $table->unsignedBigInteger('mata_kuliah_id');
             $table->unsignedBigInteger('dosen_id');
-            $table->unsignedBigInteger('mentor_id');
+            $table->unsignedBigInteger('mentor_id')->nullable();
             $table->timestamps();
+
+            $table->foreign('mata_kuliah_id')->references('id')->on('mata_kuliahs')->onDelete('cascade');
+            $table->foreign('dosen_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('mentor_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 

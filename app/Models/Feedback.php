@@ -16,6 +16,11 @@ class Feedback extends Model
         'komunikasi',
         'penguasaan_materi',
         'kejelasan_penyampaian',
-        'komentar'
+        'komentar',
     ];
+
+    public function pesertaSesi()
+    {
+        return $this->belongsTo(PesertaSesi::class, 'peserta_sesi_id');
+    }
 }

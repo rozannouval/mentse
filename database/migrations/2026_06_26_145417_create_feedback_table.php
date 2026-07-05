@@ -19,6 +19,8 @@ return new class extends Migration
             $table->tinyInteger('kejelasan_penyampaian');
             $table->text('komentar'); 
             $table->timestamps();
+
+            $table->foreign('peserta_sesi_id')->references('id')->on('peserta_sesis')->onDelete('cascade');
 });
     }
 

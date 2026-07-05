@@ -18,6 +18,10 @@ return new class extends Migration
             $table->enum('status', ['terdaftar', 'hadir', 'dibatalkan', 'tidak_hadir'])->default('terdaftar');
             $table->timestamp('tanggal_daftar')->useCurrent();
             $table->timestamps();
+
+            $table->foreign('sesi_id')->references('id')->on('sesi_mentorings')->onDelete('cascade');
+            $table->foreign('mahasiswa_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unique(['sesi_id', 'mahasiswa_id']);
         });
     }
 

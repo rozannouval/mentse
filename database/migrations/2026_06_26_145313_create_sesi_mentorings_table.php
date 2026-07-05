@@ -20,8 +20,10 @@ return new class extends Migration
             $table->time('jam_mulai');
             $table->time('jam_selesai'); 
             $table->integer('kuota'); 
-             $table->enum('status', ['dibuka', 'ditutup', 'selesai'])->default('dibuka');
+            $table->enum('status', ['dibuka', 'ditutup', 'selesai'])->default('dibuka');
             $table->timestamps();
+
+            $table->foreign('kelas_id')->references('id')->on('kelas')->onDelete('cascade');
         });
     }
 
