@@ -76,7 +76,7 @@
                             class="w-full rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-400 transition-colors @error('nidn') border-red-300 @enderror">
                         @error('nidn') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
-                    <div id="kelas-field" class="sm:col-span-2 {{ old('role', $user->role) === 'mahasiswa' ? '' : 'hidden' }}">
+                    <div id="kelas-field" class="sm:col-span-2 {{ in_array(old('role', $user->role), ['mahasiswa', 'mentor']) ? '' : 'hidden' }}">
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Kelas <span class="text-red-500">*</span></label>
                         <div class="relative">
                             <select name="kelas_id" class="w-full rounded-lg border border-gray-200 px-3.5 py-2.5 pr-9 text-sm text-gray-900 appearance-none focus:outline-none focus:border-gray-400 transition-colors bg-white @error('kelas_id') border-red-300 @enderror">
@@ -107,7 +107,7 @@ document.querySelectorAll('.role-radio').forEach(r => {
         var v = this.value;
         document.getElementById('nim-field').className = (v === 'mahasiswa' || v === 'mentor') ? '' : 'hidden';
         document.getElementById('nidn-field').className = v === 'dosen' ? '' : 'hidden';
-        document.getElementById('kelas-field').className = v === 'mahasiswa' ? 'sm:col-span-2' : 'sm:col-span-2 hidden';
+        document.getElementById('kelas-field').className = (v === 'mahasiswa' || v === 'mentor') ? 'sm:col-span-2' : 'sm:col-span-2 hidden';
     });
 });
 </script>

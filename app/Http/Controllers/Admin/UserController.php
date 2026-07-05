@@ -40,7 +40,7 @@ class UserController extends Controller
         if ($role === 'dosen') {
             $rules['nidn'] = 'required|string|max:20|unique:users,nidn';
         }
-        if ($role === 'mahasiswa') {
+        if (in_array($role, ['mahasiswa', 'mentor'])) {
             $rules['kelas_id'] = 'required|exists:kelas,id';
         }
 
@@ -53,7 +53,7 @@ class UserController extends Controller
             'role' => $validated['role'],
             'nim' => in_array($role, ['mahasiswa', 'mentor']) ? ($validated['nim'] ?? null) : null,
             'nidn' => $role === 'dosen' ? ($validated['nidn'] ?? null) : null,
-            'kelas_id' => $role === 'mahasiswa' ? ($validated['kelas_id'] ?? null) : null,
+            'kelas_id' => in_array($role, ['mahasiswa', 'mentor']) ? ($validated['kelas_id'] ?? null) : null,
         ]);
 
         ActivityLogger::log('Tambah User', "Admin menambahkan user {$user->name} ({$user->email}) sebagai {$user->role}");
@@ -84,7 +84,7 @@ class UserController extends Controller
         if ($role === 'dosen') {
             $rules['nidn'] = 'required|string|max:20|unique:users,nidn,' . $user->id;
         }
-        if ($role === 'mahasiswa') {
+        if (in_array($role, ['mahasiswa', 'mentor'])) {
             $rules['kelas_id'] = 'required|exists:kelas,id';
         }
 
@@ -98,7 +98,7 @@ class UserController extends Controller
             'role' => $role,
             'nim' => in_array($role, ['mahasiswa', 'mentor']) ? ($validated['nim'] ?? null) : null,
             'nidn' => $role === 'dosen' ? ($validated['nidn'] ?? null) : null,
-            'kelas_id' => $role === 'mahasiswa' ? ($validated['kelas_id'] ?? null) : null,
+            'kelas_id' => in_array($role, ['mahasiswa', 'mentor']) ? ($validated['kelas_id'] ?? null) : null,
         ];
 
         if ($request->filled('password')) {

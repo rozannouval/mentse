@@ -43,7 +43,7 @@ class User extends Authenticatable
 
     public function kelasMentor()
     {
-        return $this->hasMany(Kelas::class, 'mentor_id');
+        return $this->hasOne(Kelas::class, 'mentor_id');
     }
 
     public function kelas()

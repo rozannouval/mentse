@@ -86,7 +86,7 @@ document.getElementById('role-select').addEventListener('change', function() {
     var v = this.value;
     document.getElementById('nim-field').style.display = (v === 'mahasiswa' || v === 'mentor') ? 'block' : 'none';
     document.getElementById('nidn-field').style.display = v === 'dosen' ? 'block' : 'none';
-    document.getElementById('kelas-field').style.display = v === 'mahasiswa' ? 'block' : 'none';
+    document.getElementById('kelas-field').style.display = (v === 'mahasiswa' || v === 'mentor') ? 'block' : 'none';
 });
 @if (old('role') === 'mahasiswa' || old('role') === 'mentor')
 document.getElementById('nim-field').style.display = 'block';
@@ -94,7 +94,7 @@ document.getElementById('nim-field').style.display = 'block';
 @if (old('role') === 'dosen')
 document.getElementById('nidn-field').style.display = 'block';
 @endif
-@if (old('role') === 'mahasiswa')
+@if (old('role') === 'mahasiswa' || old('role') === 'mentor')
 document.getElementById('kelas-field').style.display = 'block';
 @endif
 </script>
