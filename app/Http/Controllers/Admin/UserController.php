@@ -13,13 +13,13 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::query()->latest()->get();
+        $users = User::with('kelas')->latest()->get();
         return view('admin.users', compact('users'));
     }
 
     public function create()
     {
-        $kelasList = Kelas::all();
+        $kelasList = Kelas::with('mataKuliah')->get();
         return view('admin.users-create', compact('kelasList'));
     }
 
@@ -29,10 +29,10 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
-            'role' => 'required|in:admin,dosen,mentor,mahasiswa',
-            'nim' => 'nullable|string|max:20',
-            'nidn' => 'nullable|string|max:20',
-            'kelas_id' => 'nullable|exists:kelas,id',
+            'role' => 'required|in:dosen,mentor,mahasiswa',
+            'nim' => 'required_if:role,mahasiswa,mentor|string|max:20|unique:users,nim',
+            'nidn' => 'required_if:role,dosen|string|max:20|unique:users,nidn',
+            'kelas_id' => 'required_if:role,mahasiswa|exists:kelas,id',
         ]);
 
         $user = User::create([
@@ -40,9 +40,9 @@ class UserController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
-            'nim' => $validated['nim'] ?? null,
-            'nidn' => $validated['nidn'] ?? null,
-            'kelas_id' => $validated['role'] === 'mahasiswa' ? ($validated['kelas_id'] ?? null) : null,
+            'nim' => in_array($validated['role'], ['mahasiswa', 'mentor']) ? $validated['nim'] : null,
+            'nidn' => $validated['role'] === 'dosen' ? $validated['nidn'] : null,
+            'kelas_id' => $validated['role'] === 'mahasiswa' ? $validated['kelas_id'] : null,
         ]);
 
         ActivityLogger::log('Tambah User', "Admin menambahkan user {$user->name} ({$user->email}) sebagai {$user->role}");
@@ -52,7 +52,7 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $kelasList = Kelas::all();
+        $kelasList = Kelas::with('mataKuliah')->get();
         return view('admin.users-edit', compact('user', 'kelasList'));
     }
 
@@ -63,9 +63,9 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8',
             'role' => 'required|in:admin,dosen,mentor,mahasiswa',
-            'nim' => 'nullable|string|max:20',
-            'nidn' => 'nullable|string|max:20',
-            'kelas_id' => 'nullable|exists:kelas,id',
+            'nim' => 'required_if:role,mahasiswa,mentor|string|max:20|unique:users,nim,' . $user->id,
+            'nidn' => 'required_if:role,dosen|string|max:20|unique:users,nidn,' . $user->id,
+            'kelas_id' => 'required_if:role,mahasiswa|exists:kelas,id',
         ]);
 
         $role = $user->role === 'admin' ? 'admin' : $validated['role'];
@@ -74,9 +74,9 @@ class UserController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'role' => $role,
-            'nim' => $validated['nim'] ?? null,
-            'nidn' => $validated['nidn'] ?? null,
-            'kelas_id' => $role === 'mahasiswa' ? ($validated['kelas_id'] ?? null) : null,
+            'nim' => in_array($role, ['mahasiswa', 'mentor']) ? $validated['nim'] : null,
+            'nidn' => $role === 'dosen' ? $validated['nidn'] : null,
+            'kelas_id' => $role === 'mahasiswa' ? $validated['kelas_id'] : null,
         ];
 
         if ($request->filled('password')) {

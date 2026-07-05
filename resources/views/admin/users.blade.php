@@ -26,7 +26,8 @@
                 <tr class="border-b border-gray-50">
                     <th class="text-left px-5 py-3 text-xs font-medium text-gray-500">No</th>
                     <th class="text-left px-5 py-3 text-xs font-medium text-gray-500">User</th>
-                    <th class="text-left px-5 py-3 text-xs font-medium text-gray-500">Identitas</th>
+                    <th class="text-left px-5 py-3 text-xs font-medium text-gray-500">NIM/NIDN</th>
+                    <th class="text-left px-5 py-3 text-xs font-medium text-gray-500">Kelas</th>
                     <th class="text-left px-5 py-3 text-xs font-medium text-gray-500">Email</th>
                     <th class="text-left px-5 py-3 text-xs font-medium text-gray-500">Role</th>
                     <th class="text-left px-5 py-3 text-xs font-medium text-gray-500">Aksi</th>
@@ -55,6 +56,13 @@
                             {{ $user->nim }}
                         @endif
                     </td>
+                    <td class="px-5 py-3.5 text-xs text-gray-500">
+                        @if (in_array($user->role, ['mahasiswa', 'mentor']))
+                            {{ $user->kelas->nama_kelas ?? '-' }}
+                        @else
+                        <span class="text-gray-300">&mdash;</span>
+                        @endif
+                    </td>
                     <td class="px-5 py-3.5 text-gray-500">{{ $user->email }}</td>
                     <td class="px-5 py-3.5">
                         @php
@@ -70,7 +78,7 @@
                     </td>
                     <td class="px-5 py-3.5">
                         <div class="flex items-center gap-1.5">
-                            <button onclick="detailUser('{{ $user->name }}', '{{ $user->email }}', '{{ $user->role }}', '{{ $user->nim ?? '' }}', '{{ $user->nidn ?? '' }}')"
+                            <button onclick="detailUser('{{ $user->name }}', '{{ $user->email }}', '{{ $user->role }}', '{{ $user->nim ?? '' }}', '{{ $user->nidn ?? '' }}', '{{ $user->kelas->nama_kelas ?? '' }}')"
                                 class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors cursor-pointer">Detail</button>
                             <a href="{{ route('admin.users.edit', $user) }}" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors">Edit</a>
                             @if ($user->role !== 'admin')
@@ -84,7 +92,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-5 py-10 text-center text-gray-400">Belum ada data user.</td>
+                    <td colspan="7" class="px-5 py-10 text-center text-gray-400">Belum ada data user.</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -110,6 +118,10 @@
                 <p class="text-gray-400 text-xs">NIDN</p>
                 <p class="font-medium text-gray-900" id="detail-nidn"></p>
             </div>
+            <div class="mt-3" id="detail-kelas-field">
+                <p class="text-gray-400 text-xs">Kelas</p>
+                <p class="font-medium text-gray-900" id="detail-kelas"></p>
+            </div>
             <div class="mt-3">
                 <p class="text-gray-400 text-xs">Role</p>
                 <p class="font-medium text-gray-900" id="detail-role"></p>
@@ -122,7 +134,7 @@
 </x-modal>
 
 <script>
-function detailUser(name, email, role, nim, nidn) {
+function detailUser(name, email, role, nim, nidn, kelas) {
     document.getElementById('detail-name').textContent = name;
     document.getElementById('detail-email').textContent = email;
     document.getElementById('detail-role').textContent = role.charAt(0).toUpperCase() + role.slice(1);
@@ -130,18 +142,23 @@ function detailUser(name, email, role, nim, nidn) {
 
     var nimField = document.getElementById('detail-nim-field');
     var nidnField = document.getElementById('detail-nidn-field');
+    var kelasField = document.getElementById('detail-kelas-field');
 
     if (role === 'dosen') {
         nimField.style.display = 'none';
         nidnField.style.display = 'block';
         document.getElementById('detail-nidn').textContent = nidn || '-';
+        kelasField.style.display = 'none';
     } else if (role === 'mentor' || role === 'mahasiswa') {
         nimField.style.display = 'block';
         nidnField.style.display = 'none';
         document.getElementById('detail-nim').textContent = nim || '-';
+        kelasField.style.display = 'block';
+        document.getElementById('detail-kelas').textContent = kelas || '-';
     } else {
         nimField.style.display = 'none';
         nidnField.style.display = 'none';
+        kelasField.style.display = 'none';
     }
 
     openModal('modal-detail');

@@ -55,10 +55,12 @@
     </div>
 </div>
 
-@if (!$kelas->mentor)
 <div class="bg-white rounded-xl border border-slate-100 shadow-sm mb-6">
-    <div class="px-5 py-4 border-b border-slate-100">
+    <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
         <h2 class="text-base font-semibold text-slate-900">Penunjukan Mentor</h2>
+        @if ($kelas->mentor)
+        <span class="text-xs text-slate-400">Mentor saat ini: <strong class="text-slate-700">{{ $kelas->mentor->name }}</strong></span>
+        @endif
     </div>
     <div class="p-5">
         <div class="p-5 bg-gradient-to-br from-violet-50 to-indigo-50/50 rounded-xl border border-violet-100">
@@ -69,8 +71,13 @@
                     </svg>
                 </div>
                 <div>
+                    @if ($kelas->mentor)
+                    <p class="text-sm font-semibold text-violet-900">Ganti Mentor</p>
+                    <p class="text-xs text-violet-600 mt-0.5">Pilih mahasiswa lain untuk menggantikan mentor saat ini.</p>
+                    @else
                     <p class="text-sm font-semibold text-violet-900">Belum ada mentor untuk kelas ini</p>
                     <p class="text-xs text-violet-600 mt-0.5">Pilih salah satu mahasiswa dari daftar di bawah untuk dijadikan mentor. Role-nya akan berubah menjadi mentor secara otomatis.</p>
+                    @endif
                 </div>
             </div>
 
@@ -80,29 +87,22 @@
                 <label class="block text-xs font-semibold text-violet-700 uppercase tracking-wider mb-2">Calon Mentor</label>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <div class="flex-1 relative">
-                        <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                        </svg>
                         <select name="mentor_id" required
-                            class="block w-full rounded-lg border border-violet-200 pl-9 pr-3 py-2.5 text-sm text-slate-900 appearance-none focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-white">
+                            class="block w-full rounded-lg border border-violet-200 pl-3 py-2.5 text-sm text-slate-900 appearance-none focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 bg-white">
                             <option value="">-- Pilih Mahasiswa --</option>
                             @foreach ($mahasiswas as $m)
-                            <option value="{{ $m->id }}">{{ $m->name }} ({{ $m->email }})</option>
+                            <option value="{{ $m->id }}" {{ $kelas->mentor_id === $m->id ? 'disabled' : '' }}>{{ $m->name }} ({{ $m->email }}){{ $kelas->mentor_id === $m->id ? ' — Mentor Saat Ini' : '' }}</option>
                             @endforeach
                         </select>
                     </div>
                     <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium rounded-lg transition-colors cursor-pointer shadow-sm shadow-violet-600/20">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                        </svg>
-                        Tetapkan Mentor
+                        {{ $kelas->mentor ? 'Ganti Mentor' : 'Tetapkan Mentor' }}
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-@endif
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <div class="bg-white rounded-lg border border-gray-200">

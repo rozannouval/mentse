@@ -29,5 +29,9 @@ class MataKuliahSeeder extends Seeder
             'nama_mata_kuliah' => 'Sistem Operasi'
         ]);
 
+        MataKuliah::create([
+            'nama_mata_kuliah' => 'Jaringan Komputer'
+        ]);
+
     }
 }

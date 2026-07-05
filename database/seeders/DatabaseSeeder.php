@@ -18,12 +18,6 @@ class DatabaseSeeder extends Seeder
             KelasSeeder::class,
         ]);
 
-        User::where('nim', '220101001')->update(['kelas_id' => 1]);
-        User::where('nim', '220101002')->update(['kelas_id' => 1]);
-        User::where('nim', '220101003')->update(['kelas_id' => 2]);
-        User::where('nim', '220101004')->update(['kelas_id' => 2]);
-        User::where('nim', '220101005')->update(['kelas_id' => 3]);
-
         $this->call([
             PesertaKelasSeeder::class,
             SesiMentoringSeeder::class,

@@ -21,8 +21,7 @@ class KelasController extends Controller
     {
         $mataKuliahs = MataKuliah::all();
         $dosens = User::where('role', 'dosen')->get();
-        $mentors = User::where('role', 'mentor')->get();
-        return view('admin.classes-create', compact('mataKuliahs', 'dosens', 'mentors'));
+        return view('admin.classes-create', compact('mataKuliahs', 'dosens'));
     }
 
     public function store(Request $request)
@@ -52,8 +51,14 @@ class KelasController extends Controller
     {
         $mataKuliahs = MataKuliah::all();
         $dosens = User::where('role', 'dosen')->get();
-        $mentors = User::where('role', 'mentor')->get();
-        return view('admin.classes-edit', compact('kelas', 'mataKuliahs', 'dosens', 'mentors'));
+        $calonMentors = User::where('role', 'mahasiswa')->where('kelas_id', $kelas->id)->get();
+        if ($kelas->mentor_id) {
+            $currentMentor = User::find($kelas->mentor_id);
+            if ($currentMentor && !$calonMentors->contains('id', $currentMentor->id)) {
+                $calonMentors->push($currentMentor);
+            }
+        }
+        return view('admin.classes-edit', compact('kelas', 'mataKuliahs', 'dosens', 'calonMentors'));
     }
 
     public function update(Request $request, Kelas $kelas)

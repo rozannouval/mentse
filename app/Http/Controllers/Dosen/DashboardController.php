@@ -22,12 +22,6 @@ class DashboardController extends Controller
             ])
             ->get();
 
-        /*
-        |--------------------------------------------------------------------------
-        | Statistik Dashboard
-        |--------------------------------------------------------------------------
-        */
-
         // Jumlah kelas
         $totalKelas = $kelasList->count();
 
@@ -65,24 +59,12 @@ class DashboardController extends Controller
             }
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Total Feedback
-        |--------------------------------------------------------------------------
-        */
-
         $totalFeedback = Feedback::whereHas(
             'pesertaSesi.sesi.kelas',
             function ($query) use ($dosen) {
                 $query->where('dosen_id', $dosen->id);
             }
         )->count();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Feedback Terbaru
-        |--------------------------------------------------------------------------
-        */
 
         $kelasIds = $kelasList->pluck('id');
 
@@ -100,11 +82,6 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        /*
-        |--------------------------------------------------------------------------
-        | View
-        |--------------------------------------------------------------------------
-        */
 
         return view('dosen.dashboard', compact(
             'kelasList',

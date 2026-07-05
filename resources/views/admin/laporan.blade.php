@@ -1,142 +1,136 @@
 @extends('layouts.admin')
-@section('title', 'Laporan & Statistik')
+@section('title', 'Laporan Statistik')
 @section('active', 'admin.laporan')
 
 @section('content')
-<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+<!-- Top Stat Cards -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
     <x-stat title="Total Sesi" :value="$totalSesi" color="blue" />
     <x-stat title="Total Hadir" :value="$totalHadir" color="green" />
     <x-stat title="Tidak Hadir" :value="$totalTidakHadir" color="red" />
     <x-stat title="Rate Kehadiran" :value="$rateKehadiran . '%'" color="amber" />
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-    <div class="bg-white rounded-xl border border-slate-100 shadow-sm">
-        <div class="px-5 py-4 border-b border-slate-100">
-            <h2 class="text-base font-semibold text-slate-900">Ringkasan User</h2>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- Card Ringkasan User -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+            <h2 class="text-base font-bold text-slate-800">Ringkasan Pengguna</h2>
         </div>
-        <div class="p-5">
-            <div class="space-y-3">
-                <div class="flex items-center justify-between py-2">
-                    <div class="flex items-center gap-3">
-                        <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
-                        <span class="text-sm text-slate-600">Total User</span>
+        <div class="p-6">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex items-center p-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mr-3 font-bold">U</div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">Total User</p>
+                        <p class="text-lg font-bold text-slate-800">{{ $totalUser }}</p>
                     </div>
-                    <span class="text-sm font-semibold text-slate-900">{{ $totalUser }}</span>
                 </div>
-                <div class="flex items-center justify-between py-2">
-                    <div class="flex items-center gap-3">
-                        <span class="w-2.5 h-2.5 rounded-full bg-violet-500"></span>
-                        <span class="text-sm text-slate-600">Dosen</span>
+                <div class="flex items-center p-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <div class="w-10 h-10 rounded-lg bg-violet-100 text-violet-600 flex items-center justify-center mr-3 font-bold">D</div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">Dosen</p>
+                        <p class="text-lg font-bold text-slate-800">{{ $totalDosen }}</p>
                     </div>
-                    <span class="text-sm font-semibold text-slate-900">{{ $totalDosen }}</span>
                 </div>
-                <div class="flex items-center justify-between py-2">
-                    <div class="flex items-center gap-3">
-                        <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-                        <span class="text-sm text-slate-600">Mentor</span>
+                <div class="flex items-center p-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center mr-3 font-bold">M</div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">Mentor</p>
+                        <p class="text-lg font-bold text-slate-800">{{ $totalMentor }}</p>
                     </div>
-                    <span class="text-sm font-semibold text-slate-900">{{ $totalMentor }}</span>
                 </div>
-                <div class="flex items-center justify-between py-2">
-                    <div class="flex items-center gap-3">
-                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                        <span class="text-sm text-slate-600">Mahasiswa</span>
+                <div class="flex items-center p-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center mr-3 font-bold">Mh</div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">Mahasiswa</p>
+                        <p class="text-lg font-bold text-slate-800">{{ $totalMahasiswa }}</p>
                     </div>
-                    <span class="text-sm font-semibold text-slate-900">{{ $totalMahasiswa }}</span>
                 </div>
-                <div class="flex items-center justify-between py-2">
-                    <div class="flex items-center gap-3">
-                        <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
-                        <span class="text-sm text-slate-600">Kelas</span>
+                <div class="flex items-center p-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <div class="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center mr-3 font-bold">K</div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">Kelas Aktif</p>
+                        <p class="text-lg font-bold text-slate-800">{{ $totalKelas }}</p>
                     </div>
-                    <span class="text-sm font-semibold text-slate-900">{{ $totalKelas }}</span>
                 </div>
-                <div class="flex items-center justify-between py-2">
-                    <div class="flex items-center gap-3">
-                        <span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span>
-                        <span class="text-sm text-slate-600">Feedback</span>
+                <div class="flex items-center p-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <div class="w-10 h-10 rounded-lg bg-teal-100 text-teal-600 flex items-center justify-center mr-3 font-bold">F</div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">Feedback</p>
+                        <p class="text-lg font-bold text-slate-800">{{ $totalFeedback }}</p>
                     </div>
-                    <span class="text-sm font-semibold text-slate-900">{{ $totalFeedback }}</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="bg-white rounded-xl border border-slate-100 shadow-sm">
-        <div class="px-5 py-4 border-b border-slate-100">
-            <h2 class="text-base font-semibold text-slate-900">Statistik Kehadiran</h2>
+    <!-- Card Statistik Kehadiran -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+            <h2 class="text-base font-bold text-slate-800">Tingkat Kehadiran Keseluruhan</h2>
         </div>
-        <div class="p-5">
-            <div class="flex items-end justify-center gap-8 py-4">
-                <div class="text-center">
-                    <div class="w-20 h-20 rounded-full border-4 border-emerald-500 flex items-center justify-center mx-auto mb-2">
-                        <span class="text-xl font-bold text-emerald-600">{{ $totalHadir }}</span>
-                    </div>
-                    <p class="text-xs font-medium text-slate-500">Hadir</p>
+        <div class="p-8 flex flex-col justify-center flex-grow">
+            <div class="text-center mb-6">
+                <p class="text-sm font-semibold text-slate-500 uppercase tracking-wide">Rate Kehadiran</p>
+                <h3 class="text-5xl font-extrabold text-slate-800 mt-2">{{ $rateKehadiran }}%</h3>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 pt-6 border-t border-slate-100">
+                <div class="text-center border-r border-slate-100">
+                    <p class="text-xs font-medium text-slate-500 mb-1">Total Hadir</p>
+                    <p class="text-2xl font-bold text-emerald-600">{{ $totalHadir }}</p>
                 </div>
                 <div class="text-center">
-                    <div class="w-20 h-20 rounded-full border-4 border-red-500 flex items-center justify-center mx-auto mb-2">
-                        <span class="text-xl font-bold text-red-600">{{ $totalTidakHadir }}</span>
-                    </div>
-                    <p class="text-xs font-medium text-slate-500">Tidak Hadir</p>
-                </div>
-                <div class="text-center">
-                    <div class="w-20 h-20 rounded-full border-4 border-amber-500 flex items-center justify-center mx-auto mb-2">
-                        <span class="text-xl font-bold text-amber-600">{{ $rateKehadiran }}%</span>
-                    </div>
-                    <p class="text-xs font-medium text-slate-500">Rate</p>
+                    <p class="text-xs font-medium text-slate-500 mb-1">Tidak Hadir</p>
+                    <p class="text-2xl font-bold text-red-600">{{ $totalTidakHadir }}</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="bg-white rounded-xl border border-slate-100 shadow-sm">
-    <div class="px-5 py-4 border-b border-slate-100">
-        <h2 class="text-base font-semibold text-slate-900">Riwayat Kelas</h2>
+<!-- Tabel Riwayat Kelas -->
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-100">
+        <h2 class="text-base font-bold text-slate-800">Detail Kinerja per Kelas</h2>
     </div>
     <div class="overflow-x-auto">
-        <table class="w-full text-sm">
+        <table class="w-full text-sm text-left">
             <thead>
-                <tr class="border-b border-slate-100 bg-slate-50/50">
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">Kelas</th>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">Mata Kuliah</th>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">Dosen</th>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">Mentor</th>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">Sesi</th>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">Peserta</th>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">Hadir</th>
+                <tr class="bg-slate-50 border-b border-slate-200">
+                    <th class="px-6 py-4 font-semibold text-slate-600">Kelas</th>
+                    <th class="px-6 py-4 font-semibold text-slate-600">Mata Kuliah</th>
+                    <th class="px-6 py-4 font-semibold text-slate-600">Dosen / Mentor</th>
+                    <th class="px-6 py-4 font-semibold text-slate-600 text-center">Jml Sesi</th>
+                    <th class="px-6 py-4 font-semibold text-slate-600 text-center">Peserta Hadir</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-50">
+            <tbody class="divide-y divide-slate-100">
                 @forelse ($kelasList as $k)
-                <tr class="hover:bg-slate-50/50 transition-colors">
-                    <td class="px-5 py-3.5 font-medium text-slate-900">{{ $k->nama_kelas }}</td>
-                    <td class="px-5 py-3.5 text-slate-500">{{ $k->mataKuliah->nama_mata_kuliah ?? '-' }}</td>
-                    <td class="px-5 py-3.5 text-slate-500">{{ $k->dosen->name ?? '-' }}</td>
-                    <td class="px-5 py-3.5">
-                        @if ($k->mentor)
-                        <span class="text-emerald-600 font-medium text-xs">{{ $k->mentor->name }}</span>
-                        @else
-                        <span class="text-slate-400">-</span>
-                        @endif
+                <tr class="hover:bg-slate-50/70 transition-colors duration-150">
+                    <td class="px-6 py-4 font-bold text-slate-800">{{ $k->nama_kelas }}</td>
+                    <td class="px-6 py-4 text-slate-600">{{ $k->mataKuliah->nama_mata_kuliah ?? '-' }}</td>
+                    <td class="px-6 py-4">
+                        <p class="font-medium text-slate-800">{{ $k->dosen->name ?? '-' }}</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Mentor: {{ $k->mentor->name ?? '-' }}</p>
                     </td>
-                    <td class="px-5 py-3.5 text-slate-500">{{ $k->sesiMentoring->count() }}</td>
-                    <td class="px-5 py-3.5 text-slate-500">{{ $k->total_peserta_sesi }}</td>
-                    <td class="px-5 py-3.5">
-                        @php $pct = $k->total_peserta_sesi > 0 ? round(($k->total_hadir / $k->total_peserta_sesi) * 100) : 0; @endphp
-                        <div class="flex items-center gap-2">
-                            <div class="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                <div class="h-full bg-emerald-500 rounded-full" style="width: {{ $pct }}%"></div>
-                            </div>
-                            <span class="text-xs {{ $pct >= 75 ? 'text-emerald-600' : ($pct >= 50 ? 'text-amber-600' : 'text-red-600') }}">{{ $pct }}%</span>
-                        </div>
+                    <td class="px-6 py-4 text-center font-medium text-slate-600">
+                        {{ $k->sesiMentoring->count() }}
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="font-bold text-slate-800 text-base">{{ $k->total_hadir }}</span>
+                        <span class="text-slate-500 text-xs ml-1">dari {{ $k->total_peserta_sesi }}</span>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="px-5 py-10 text-center text-slate-400">Belum ada data kelas.</td>
+                    <td colspan="5" class="px-6 py-12 text-center text-slate-500">
+                        <div class="flex flex-col items-center">
+                            <span class="text-4xl mb-3">📭</span>
+                            <p class="font-medium">Belum ada data kelas untuk ditampilkan saat ini.</p>
+                        </div>
+                    </td>
                 </tr>
                 @endforelse
             </tbody>

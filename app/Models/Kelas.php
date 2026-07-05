@@ -35,7 +35,7 @@ class Kelas extends Model
 
     public function mahasiswa()
     {
-        return $this->belongsToMany(User::class, 'peserta_kelas', 'kelas_id', 'mahasiswa_id');
+        return $this->hasMany(User::class, 'kelas_id')->where('role', 'mahasiswa');
     }
 
     public function sesiMentoring()

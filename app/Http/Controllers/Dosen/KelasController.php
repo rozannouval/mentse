@@ -13,7 +13,7 @@ class KelasController extends Controller
 {
     public function index()
     {
-        $kelasList = Auth::user()->kelasDosen()->with(['mataKuliah', 'mentor'])->get();
+        $kelasList = Auth::user()->kelasDosen()->with(['mataKuliah', 'mentor', 'mahasiswa', 'sesiMentoring'])->get();
         return view('dosen.kelas', compact('kelasList'));
     }
 
@@ -23,12 +23,15 @@ class KelasController extends Controller
             abort(403);
         }
 
-        $kelas->load(['mataKuliah', 'mentor', 'pesertaKelas.mahasiswa', 'sesiMentoring']);
+        $kelas->load(['mataKuliah', 'mentor', 'sesiMentoring']);
 
-        $mahasiswas = User::where('role', 'mahasiswa')
-            ->whereHas('pesertaKelas', function ($q) use ($kelas) {
-                $q->where('kelas_id', $kelas->id);
-            })->get();
+        $mahasiswas = User::where('kelas_id', $kelas->id)
+            ->where('role', 'mahasiswa')
+            ->get();
+
+        if ($kelas->mentor && !$mahasiswas->contains('id', $kelas->mentor_id)) {
+            $mahasiswas->push($kelas->mentor);
+        }
 
         return view('dosen.kelas-show', compact('kelas', 'mahasiswas'));
     }
@@ -49,8 +52,7 @@ class KelasController extends Controller
             return back()->with('error', 'Hanya mahasiswa yang dapat ditunjuk menjadi mentor.');
         }
 
-        $terdaftar = $calonMentor->pesertaKelas()->where('kelas_id', $kelas->id)->exists();
-        if (!$terdaftar && $calonMentor->role === 'mahasiswa') {
+        if ($calonMentor->role === 'mahasiswa' && $calonMentor->kelas_id !== $kelas->id) {
             return back()->with('error', 'Mahasiswa tersebut tidak terdaftar di kelas ini.');
         }
 
