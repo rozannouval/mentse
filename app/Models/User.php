@@ -15,8 +15,12 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'photo',
+        'nim',
+        'nidn',
         'password',
         'role',
+        'kelas_id',
     ];
 
     protected $hidden = [
@@ -40,6 +44,11 @@ class User extends Authenticatable
     public function kelasMentor()
     {
         return $this->hasMany(Kelas::class, 'mentor_id');
+    }
+
+    public function kelas()
+    {
+        return $this->belongsTo(Kelas::class, 'kelas_id');
     }
 
     public function pesertaKelas()

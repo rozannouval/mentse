@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Mahasiswa;
 
+use App\Helpers\ActivityLogger;
 use App\Http\Controllers\Controller;
 use App\Models\SesiMentoring;
 use App\Models\PesertaSesi;
@@ -13,9 +14,8 @@ class SesiController extends Controller
     public function index()
     {
         $mahasiswa = Auth::user();
-        $kelasIds = $mahasiswa->pesertaKelas()->pluck('kelas.id');
 
-        $sesiList = SesiMentoring::whereIn('kelas_id', $kelasIds)
+        $sesiList = SesiMentoring::where('kelas_id', $mahasiswa->kelas_id)
             ->where('status', 'dibuka')
             ->with(['kelas.mataKuliah', 'kelas.mentor', 'pesertaSesi'])
             ->orderBy('tanggal')
@@ -30,8 +30,7 @@ class SesiController extends Controller
     {
         $mahasiswa = Auth::user();
 
-        $terdaftarDiKelas = $mahasiswa->pesertaKelas()->where('kelas.id', $sesi->kelas_id)->exists();
-        if (!$terdaftarDiKelas) {
+        if ($mahasiswa->kelas_id !== $sesi->kelas_id) {
             return back()->with('error', 'Anda tidak terdaftar di kelas sesi ini.');
         }
 
@@ -52,6 +51,8 @@ class SesiController extends Controller
             'mahasiswa_id' => $mahasiswa->id,
             'status' => 'terdaftar',
         ]);
+
+        ActivityLogger::log('Daftar Sesi', "Mahasiswa {$mahasiswa->name} mendaftar sesi {$sesi->topik}");
 
         return redirect()->route('mahasiswa.riwayat')->with('success', 'Berhasil mendaftar sesi mentoring.');
     }

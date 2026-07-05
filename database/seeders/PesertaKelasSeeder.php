@@ -14,8 +14,5 @@ class PesertaKelasSeeder extends Seeder
         PesertaKelas::create(['kelas_id' => 2, 'mahasiswa_id' => 8]);
         PesertaKelas::create(['kelas_id' => 2, 'mahasiswa_id' => 9]);
         PesertaKelas::create(['kelas_id' => 3, 'mahasiswa_id' => 10]);
-        PesertaKelas::create(['kelas_id' => 3, 'mahasiswa_id' => 6]);
-        PesertaKelas::create(['kelas_id' => 4, 'mahasiswa_id' => 7]);
-        PesertaKelas::create(['kelas_id' => 4, 'mahasiswa_id' => 8]);
     }
 }

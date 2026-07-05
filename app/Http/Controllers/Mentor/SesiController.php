@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Mentor;
 
+use App\Helpers\ActivityLogger;
 use App\Http\Controllers\Controller;
 use App\Models\SesiMentoring;
 use App\Models\PesertaSesi;
@@ -50,7 +51,9 @@ class SesiController extends Controller
 
         $validated['status'] = 'dibuka';
 
-        SesiMentoring::create($validated);
+        $sesi = SesiMentoring::create($validated);
+
+        ActivityLogger::log('Buat Sesi', "Mentor {$sesi->kelas->mentor->name} membuat sesi {$sesi->topik}");
 
         return redirect()->route('mentor.sesi.index')->with('success', 'Sesi mentoring berhasil dibuat.');
     }
@@ -84,6 +87,8 @@ class SesiController extends Controller
 
         $sesi->update($validated);
 
+        ActivityLogger::log('Update Sesi', "Mentor {$sesi->kelas->mentor->name} mengupdate sesi {$sesi->topik}");
+
         return redirect()->route('mentor.sesi.index')->with('success', 'Sesi mentoring berhasil diperbarui.');
     }
 
@@ -93,6 +98,7 @@ class SesiController extends Controller
             abort(403);
         }
 
+        ActivityLogger::log('Hapus Sesi', "Mentor menghapus sesi {$sesi->topik}");
         $sesi->delete();
         return redirect()->route('mentor.sesi.index')->with('success', 'Sesi mentoring berhasil dihapus.');
     }
@@ -129,6 +135,8 @@ class SesiController extends Controller
         }
 
         $sesi->update(['status' => 'ditutup']);
+
+        ActivityLogger::log('Tutup Sesi', "Mentor menutup sesi {$sesi->topik}");
 
         return back()->with('success', 'Sesi mentoring ditutup.');
     }

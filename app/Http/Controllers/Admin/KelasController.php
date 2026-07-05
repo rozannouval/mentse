@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ActivityLogger;
 use App\Http\Controllers\Controller;
 use App\Models\Kelas;
 use App\Models\MataKuliah;
@@ -13,7 +14,7 @@ class KelasController extends Controller
 {
     public function index()
     {
-        $kelasList = Kelas::with(['mataKuliah', 'dosen', 'mentor'])->latest()->get();
+        $kelasList = Kelas::with(['mataKuliah', 'dosen', 'mentor', 'pesertaKelas'])->latest()->get();
         return view('admin.classes', compact('kelasList'));
     }
 
@@ -35,6 +36,8 @@ class KelasController extends Controller
         ]);
 
         Kelas::create($validated);
+
+        ActivityLogger::log('Tambah Kelas', "Admin menambahkan kelas {$validated['nama_kelas']}");
 
         return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil ditambahkan.');
     }
@@ -67,11 +70,14 @@ class KelasController extends Controller
 
         $kelas->update($validated);
 
+        ActivityLogger::log('Update Kelas', "Admin mengupdate kelas {$kelas->nama_kelas}");
+
         return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil diperbarui.');
     }
 
     public function destroy(Kelas $kelas)
     {
+        ActivityLogger::log('Hapus Kelas', "Admin menghapus kelas {$kelas->nama_kelas}");
         $kelas->delete();
         return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil dihapus.');
     }
@@ -95,11 +101,14 @@ class KelasController extends Controller
             'mahasiswa_id' => $validated['mahasiswa_id'],
         ]);
 
+        ActivityLogger::log('Tambah Peserta Kelas', "Admin menambah peserta ke kelas {$kelas->nama_kelas}");
+
         return back()->with('success', 'Mahasiswa berhasil ditambahkan ke kelas.');
     }
 
     public function removePeserta(Kelas $kelas, PesertaKelas $peserta)
     {
+        ActivityLogger::log('Hapus Peserta Kelas', "Admin menghapus peserta dari kelas {$kelas->nama_kelas}");
         $peserta->delete();
         return back()->with('success', 'Mahasiswa berhasil dihapus dari kelas.');
     }

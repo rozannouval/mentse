@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Dosen;
 
+use App\Helpers\ActivityLogger;
 use App\Http\Controllers\Controller;
 use App\Models\Kelas;
 use App\Models\User;
@@ -58,6 +59,8 @@ class KelasController extends Controller
         if ($calonMentor->role === 'mahasiswa') {
             $calonMentor->update(['role' => 'mentor']);
         }
+
+        ActivityLogger::log('Pilih Mentor', "Dosen {$kelas->dosen->name} menunjuk mentor {$calonMentor->name} untuk kelas {$kelas->nama_kelas}");
 
         return back()->with('success', 'Mentor berhasil ditunjuk.');
     }

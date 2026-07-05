@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Dosen\DashboardController;
 use App\Http\Controllers\Dosen\KelasController;
+use App\Http\Controllers\Dosen\MonitoringController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'role:dosen'])->prefix('dosen')->name('dosen.')->group(function () {
@@ -11,5 +12,7 @@ Route::middleware(['auth', 'role:dosen'])->prefix('dosen')->name('dosen.')->grou
     Route::get('/kelas', [KelasController::class, 'index'])->name('kelas.index');
     Route::get('/kelas/{kelas}', [KelasController::class, 'show'])->name('kelas.show');
     Route::put('/kelas/{kelas}/pilih-mentor', [KelasController::class, 'pilihMentor'])->name('kelas.pilih-mentor');
+
+    Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring');
 
 });
