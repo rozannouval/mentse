@@ -10,26 +10,111 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        // Dosen yang sedang login
         $dosen = Auth::user();
-        $kelasList = $dosen->kelasDosen()->with(['mataKuliah', 'mentor', 'sesiMentoring.pesertaSesi'])->get();
 
+        // Ambil seluruh kelas yang diampu beserta relasinya
+        $kelasList = $dosen->kelasDosen()
+            ->with([
+                'mataKuliah',
+                'mentor',
+                'sesiMentoring.pesertaSesi'
+            ])
+            ->get();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Statistik Dashboard
+        |--------------------------------------------------------------------------
+        */
+
+        // Jumlah kelas
         $totalKelas = $kelasList->count();
-        $totalSesi = $kelasList->sum(fn($k) => $k->sesiMentoring->count());
-        $kelasTanpaMentor = $kelasList->filter(fn($k) => !$k->mentor_id)->count();
-        $totalPeserta = $kelasList->sum(fn($k) => $k->sesiMentoring->sum(fn($s) => $s->pesertaSesi->count()));
-        $sesiAktif = $kelasList->sum(fn($k) => $k->sesiMentoring->where('status', 'dibuka')->count());
-        $totalFeedback = Feedback::whereHas('pesertaSesi.sesi.kelas', function ($q) use ($dosen) {
-            $q->where('dosen_id', $dosen->id);
-        })->count();
+
+        // Jumlah seluruh sesi mentoring
+        $totalSesi = 0;
+
+        // Jumlah kelas yang belum memiliki mentor
+        $kelasTanpaMentor = 0;
+
+        // Jumlah seluruh peserta sesi
+        $totalPeserta = 0;
+
+        // Jumlah sesi yang masih dibuka
+        $sesiAktif = 0;
+
+        foreach ($kelasList as $kelas) {
+
+            // Hitung jumlah sesi
+            $totalSesi += $kelas->sesiMentoring->count();
+
+            // Hitung kelas tanpa mentor
+            if (!$kelas->mentor_id) {
+                $kelasTanpaMentor++;
+            }
+
+            foreach ($kelas->sesiMentoring as $sesi) {
+
+                // Total peserta
+                $totalPeserta += $sesi->pesertaSesi->count();
+
+                // Total sesi aktif
+                if ($sesi->status === 'dibuka') {
+                    $sesiAktif++;
+                }
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Total Feedback
+        |--------------------------------------------------------------------------
+        */
+
+        $totalFeedback = Feedback::whereHas(
+            'pesertaSesi.sesi.kelas',
+            function ($query) use ($dosen) {
+                $query->where('dosen_id', $dosen->id);
+            }
+        )->count();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Feedback Terbaru
+        |--------------------------------------------------------------------------
+        */
 
         $kelasIds = $kelasList->pluck('id');
-        $recentFeedback = Feedback::whereHas('pesertaSesi.sesi.kelas', function ($q) use ($kelasIds) {
-            $q->whereIn('id', $kelasIds);
-        })->with(['pesertaSesi.mahasiswa', 'pesertaSesi.sesi.kelas'])->latest()->take(5)->get();
+
+        $recentFeedback = Feedback::whereHas(
+            'pesertaSesi.sesi.kelas',
+            function ($query) use ($kelasIds) {
+                $query->whereIn('id', $kelasIds);
+            }
+        )
+            ->with([
+                'pesertaSesi.mahasiswa',
+                'pesertaSesi.sesi.kelas'
+            ])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        /*
+        |--------------------------------------------------------------------------
+        | View
+        |--------------------------------------------------------------------------
+        */
 
         return view('dosen.dashboard', compact(
-            'kelasList', 'totalKelas', 'totalSesi', 'kelasTanpaMentor',
-            'totalPeserta', 'sesiAktif', 'totalFeedback', 'recentFeedback'
+            'kelasList',
+            'totalKelas',
+            'totalSesi',
+            'kelasTanpaMentor',
+            'totalPeserta',
+            'sesiAktif',
+            'totalFeedback',
+            'recentFeedback'
         ));
     }
 }

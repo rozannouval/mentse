@@ -24,7 +24,7 @@
             @else
             <p class="text-amber-600">Belum ada mentor</p>
             @endif
-            <p class="mt-1">{{ $kelas->sesiMentoring->count() }} sesi &middot; {{ $kelas->peserta->count() }} mahasiswa</p>
+            <p class="mt-1">{{ $kelas->sesiMentoring->count() }} sesi &middot; {{ $kelas->mahasiswa->count() }} mahasiswa</p>
         </div>
         <div class="flex items-center gap-2">
             <a href="{{ route('dosen.kelas.show', $kelas) }}" class="px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium rounded-lg transition-colors">

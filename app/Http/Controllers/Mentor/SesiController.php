@@ -160,7 +160,18 @@ class SesiController extends Controller
             $q->where('mentor_id', $mentor->id);
         })->with(['mahasiswa', 'sesi.kelas.mataKuliah'])->latest()->get();
 
-        return view('mentor.peserta', compact('pesertaList'));
+        $mkGroups = $pesertaList->groupBy(function ($p) {
+            return $p->sesi->kelas->mataKuliah->id . '|' . $p->sesi->kelas->mataKuliah->nama_mata_kuliah;
+        })->map(function ($items, $key) {
+            [$id, $nama] = explode('|', $key, 2);
+            return (object) [
+                'mata_kuliah_id' => $id,
+                'nama_mata_kuliah' => $nama,
+                'peserta' => $items,
+            ];
+        })->values();
+
+        return view('mentor.peserta', compact('mkGroups'));
     }
 
     public function feedback()

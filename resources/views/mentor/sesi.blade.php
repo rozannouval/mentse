@@ -39,13 +39,13 @@
                         </a>
                     </td>
                     <td class="px-5 py-3.5"><x-badge type="{{ $s->status }}">{{ ucfirst($s->status) }}</x-badge></td>
-                    <td class="px-5 py-3.5">
+                    <td class="px-5 py-3.5 relative">
                         @if ($s->status == 'dibuka')
-                        <div x-data="{ open: false }" class="relative">
-                            <button @click="open = !open" @click.outside="open = false" class="px-2.5 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+                        <div x-data="{ open: false, dir: 'down' }" class="relative inline-block">
+                            <button @click="open = !open; if(open) { $nextTick(() => { let b = $el.getBoundingClientRect(); let spaceBelow = window.innerHeight - b.bottom; dir = spaceBelow < 200 ? 'up' : 'down'; }); }" class="px-2.5 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
                                 Aksi
                             </button>
-                            <div x-show="open" x-cloak class="absolute right-0 mt-1 w-36 bg-white rounded-lg border border-gray-100 shadow-sm z-10 py-1">
+                            <div x-show="open" x-cloak :class="dir === 'up' ? 'bottom-full mb-1' : 'mt-1'" class="absolute right-0 w-36 bg-white rounded-lg border border-gray-100 shadow-sm z-10 py-1" @click.outside="open = false">
                                 <a href="{{ route('mentor.sesi.presensi', $s) }}" class="block px-3 py-2 text-xs text-gray-700 hover:bg-gray-50 transition-colors">Presensi</a>
                                 <a href="{{ route('mentor.sesi.edit', $s) }}" class="block px-3 py-2 text-xs text-gray-700 hover:bg-gray-50 transition-colors">Edit</a>
                                 <form action="{{ route('mentor.sesi.selesai', $s) }}" method="POST">
