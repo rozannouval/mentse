@@ -16,13 +16,5 @@ class FeedbackSeeder extends Seeder
             'kejelasan_penyampaian' => 5,
             'komentar' => 'Mentoring sangat membantu. Penjelasan mudah dipahami.',
         ]);
-
-        Feedback::create([
-            'peserta_sesi_id' => 3,
-            'komunikasi' => 4,
-            'penguasaan_materi' => 5,
-            'kejelasan_penyampaian' => 4,
-            'komentar' => 'Materi BST dijelaskan dengan jelas dan praktik langsung.',
-        ]);
     }
 }

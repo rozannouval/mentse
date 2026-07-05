@@ -14,23 +14,15 @@ class MataKuliahSeeder extends Seeder
         ]);
 
         MataKuliah::create([
-            'nama_mata_kuliah' => 'Sistem Basis Data'
+            'nama_mata_kuliah' => 'Pemrograman Java Lanjutan'
         ]);
 
         MataKuliah::create([
-            'nama_mata_kuliah' => 'Struktur Data'
+            'nama_mata_kuliah' => 'Internet of Things'
         ]);
 
         MataKuliah::create([
-            'nama_mata_kuliah' => 'Sistem Informasi'
-        ]);
-
-        MataKuliah::create([
-            'nama_mata_kuliah' => 'Sistem Operasi'
-        ]);
-
-        MataKuliah::create([
-            'nama_mata_kuliah' => 'Jaringan Komputer'
+            'nama_mata_kuliah' => 'Programming Berorientasi Objek'
         ]);
 
     }
