@@ -13,62 +13,65 @@
     <x-stat title="Mahasiswa" :value="$roleCounts['mahasiswa']" color="green" />
 </div>
 
-<div class="bg-white rounded-xl border border-slate-100 shadow-sm">
-    <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-        <h2 class="text-base font-semibold text-slate-900">Daftar Pengguna</h2>
-        <a href="{{ route('admin.users.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium rounded-lg transition-colors shadow-sm shadow-slate-900/20">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+<div class="bg-white rounded-xl border border-gray-200">
+    <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h2 class="text-[15px] font-semibold text-gray-900">Daftar Pengguna</h2>
+        <a href="{{ route('admin.users.create') }}" class="px-3 py-1.5 bg-gray-900 hover:bg-gray-800 text-white text-xs font-medium rounded-lg transition-colors">
             Tambah User
         </a>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full text-sm">
             <thead>
-                <tr class="border-b border-slate-100 bg-slate-50/50">
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">No</th>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">User</th>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">NIM / NIDN</th>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">Email</th>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">Role</th>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">Aksi</th>
+                <tr class="border-b border-gray-50">
+                    <th class="text-left px-5 py-3 text-xs font-medium text-gray-500">No</th>
+                    <th class="text-left px-5 py-3 text-xs font-medium text-gray-500">User</th>
+                    <th class="text-left px-5 py-3 text-xs font-medium text-gray-500">Identitas</th>
+                    <th class="text-left px-5 py-3 text-xs font-medium text-gray-500">Email</th>
+                    <th class="text-left px-5 py-3 text-xs font-medium text-gray-500">Role</th>
+                    <th class="text-left px-5 py-3 text-xs font-medium text-gray-500">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-50">
+            <tbody class="divide-y divide-gray-50">
                 @forelse ($users as $key => $user)
-                <tr class="hover:bg-slate-50/50 transition-colors">
-                    <td class="px-5 py-3.5 text-slate-500">{{ $key + 1 }}</td>
+                <tr class="hover:bg-gray-50/50">
+                    <td class="px-5 py-3.5 text-gray-500">{{ $key + 1 }}</td>
                     <td class="px-5 py-3.5">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-slate-500 flex-shrink-0 overflow-hidden">
+                            <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-500 flex-shrink-0 overflow-hidden">
                                 @if ($user->photo)
                                 <img src="{{ asset('storage/' . $user->photo) }}" alt="" class="w-full h-full object-cover">
                                 @else
                                 {{ strtoupper(substr($user->name, 0, 1)) }}
                                 @endif
                             </div>
-                            <span class="font-medium text-slate-900">{{ $user->name }}</span>
+                            <span class="font-medium text-gray-900">{{ $user->name }}</span>
                         </div>
                     </td>
-                    <td class="px-5 py-3.5 text-slate-500 font-mono text-xs">
-                        {{ $user->nim ?? ($user->nidn ?? '-') }}
+                    <td class="px-5 py-3.5 text-xs font-mono text-gray-500">
+                        @if ($user->role === 'dosen')
+                            {{ $user->nidn }}
+                        @elseif (in_array($user->role, ['mentor', 'mahasiswa']))
+                            {{ $user->nim }}
+                        @endif
                     </td>
-                    <td class="px-5 py-3.5 text-slate-500">{{ $user->email }}</td>
+                    <td class="px-5 py-3.5 text-gray-500">{{ $user->email }}</td>
                     <td class="px-5 py-3.5">
                         @php
                         $roleStyle = match($user->role) {
-                            'admin' => 'bg-red-50 text-red-700 ring-red-600/20',
-                            'dosen' => 'bg-violet-50 text-violet-700 ring-violet-600/20',
-                            'mentor' => 'bg-amber-50 text-amber-700 ring-amber-600/20',
-                            'mahasiswa' => 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
-                            default => 'bg-slate-50 text-slate-600',
+                            'admin' => 'bg-red-50 text-red-700',
+                            'dosen' => 'bg-violet-50 text-violet-700',
+                            'mentor' => 'bg-amber-50 text-amber-700',
+                            'mahasiswa' => 'bg-emerald-50 text-emerald-700',
+                            default => 'bg-gray-50 text-gray-600',
                         };
                         @endphp
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ring-1 ring-inset {{ $roleStyle }}">{{ ucfirst($user->role) }}</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium {{ $roleStyle }}">{{ ucfirst($user->role) }}</span>
                     </td>
                     <td class="px-5 py-3.5">
                         <div class="flex items-center gap-1.5">
-                            <button onclick="detailUser({{ $user->id }}, '{{ $user->name }}', '{{ $user->email }}', '{{ $user->role }}', '{{ $user->nim ?? '' }}', '{{ $user->nidn ?? '' }}')"
-                                class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-md transition-colors cursor-pointer">Detail</button>
+                            <button onclick="detailUser('{{ $user->name }}', '{{ $user->email }}', '{{ $user->role }}', '{{ $user->nim ?? '' }}', '{{ $user->nidn ?? '' }}')"
+                                class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors cursor-pointer">Detail</button>
                             <a href="{{ route('admin.users.edit', $user) }}" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors">Edit</a>
                             @if ($user->role !== 'admin')
                             <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline">
@@ -81,7 +84,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="px-5 py-10 text-center text-slate-400">Belum ada data user.</td>
+                    <td colspan="6" class="px-5 py-10 text-center text-gray-400">Belum ada data user.</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -91,41 +94,56 @@
 
 <x-modal id="modal-detail" title="Detail User">
     <div class="space-y-3 text-sm" id="detail-content">
-        <div class="flex items-center gap-4 pb-3 border-b border-slate-100">
-            <div class="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center text-2xl font-bold text-slate-400" id="detail-avatar"></div>
+        <div class="flex items-center gap-4 pb-3 border-b border-gray-100">
+            <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-2xl font-bold text-gray-400" id="detail-avatar"></div>
             <div>
-                <p class="font-semibold text-slate-900 text-base" id="detail-name"></p>
-                <p class="text-slate-500 text-sm" id="detail-email"></p>
+                <p class="font-semibold text-gray-900 text-base" id="detail-name"></p>
+                <p class="text-gray-500 text-sm" id="detail-email"></p>
             </div>
         </div>
-        <div class="grid grid-cols-2 gap-3 pt-1">
-            <div>
-                <p class="text-slate-400 text-xs">NIM</p>
-                <p class="font-medium text-slate-900" id="detail-nim">-</p>
+        <div class="pt-1">
+            <div id="detail-nim-field">
+                <p class="text-gray-400 text-xs">NIM</p>
+                <p class="font-medium text-gray-900" id="detail-nim"></p>
             </div>
-            <div>
-                <p class="text-slate-400 text-xs">NIDN</p>
-                <p class="font-medium text-slate-900" id="detail-nidn">-</p>
+            <div id="detail-nidn-field" style="display:none">
+                <p class="text-gray-400 text-xs">NIDN</p>
+                <p class="font-medium text-gray-900" id="detail-nidn"></p>
             </div>
-            <div>
-                <p class="text-slate-400 text-xs">Role</p>
-                <p class="font-medium text-slate-900" id="detail-role"></p>
+            <div class="mt-3">
+                <p class="text-gray-400 text-xs">Role</p>
+                <p class="font-medium text-gray-900" id="detail-role"></p>
             </div>
         </div>
     </div>
-    <div class="flex justify-end mt-4 pt-3 border-t border-slate-100">
-        <button type="button" onclick="closeModal('modal-detail')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-colors cursor-pointer">Tutup</button>
+    <div class="flex justify-end mt-4 pt-3 border-t border-gray-100">
+        <button type="button" onclick="closeModal('modal-detail')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition-colors cursor-pointer">Tutup</button>
     </div>
 </x-modal>
 
 <script>
-function detailUser(id, name, email, role, nim, nidn) {
+function detailUser(name, email, role, nim, nidn) {
     document.getElementById('detail-name').textContent = name;
     document.getElementById('detail-email').textContent = email;
     document.getElementById('detail-role').textContent = role.charAt(0).toUpperCase() + role.slice(1);
-    document.getElementById('detail-nim').textContent = nim || '-';
-    document.getElementById('detail-nidn').textContent = nidn || '-';
     document.getElementById('detail-avatar').textContent = name.charAt(0).toUpperCase();
+
+    var nimField = document.getElementById('detail-nim-field');
+    var nidnField = document.getElementById('detail-nidn-field');
+
+    if (role === 'dosen') {
+        nimField.style.display = 'none';
+        nidnField.style.display = 'block';
+        document.getElementById('detail-nidn').textContent = nidn || '-';
+    } else if (role === 'mentor' || role === 'mahasiswa') {
+        nimField.style.display = 'block';
+        nidnField.style.display = 'none';
+        document.getElementById('detail-nim').textContent = nim || '-';
+    } else {
+        nimField.style.display = 'none';
+        nidnField.style.display = 'none';
+    }
+
     openModal('modal-detail');
 }
 </script>

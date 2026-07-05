@@ -13,7 +13,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::latest()->get();
+        $users = User::query()->latest()->get();
         return view('admin.users', compact('users'));
     }
 
@@ -68,13 +68,15 @@ class UserController extends Controller
             'kelas_id' => 'nullable|exists:kelas,id',
         ]);
 
+        $role = $user->role === 'admin' ? 'admin' : $validated['role'];
+
         $data = [
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'role' => $validated['role'],
+            'role' => $role,
             'nim' => $validated['nim'] ?? null,
             'nidn' => $validated['nidn'] ?? null,
-            'kelas_id' => $validated['role'] === 'mahasiswa' ? ($validated['kelas_id'] ?? null) : null,
+            'kelas_id' => $role === 'mahasiswa' ? ($validated['kelas_id'] ?? null) : null,
         ];
 
         if ($request->filled('password')) {

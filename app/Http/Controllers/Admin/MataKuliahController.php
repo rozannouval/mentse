@@ -11,7 +11,7 @@ class MataKuliahController extends Controller
 {
     public function index()
     {
-        $mataKuliahs = MataKuliah::latest()->get();
+        $mataKuliahs = MataKuliah::query()->latest()->get();
         return view('admin.courses', compact('mataKuliahs'));
     }
 

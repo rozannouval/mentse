@@ -15,9 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('photo')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('role', ['admin', 'dosen', 'mentor', 'mahasiswa']);
+            $table->string('nim')->nullable();
+            $table->string('nidn')->nullable();
+            $table->foreignId('kelas_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
